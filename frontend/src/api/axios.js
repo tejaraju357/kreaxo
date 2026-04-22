@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'api.kreaxo.in/api',
+  baseURL: 'https://api.kreaxo.in/api/',
 });
 
 // Add token to every request if available
