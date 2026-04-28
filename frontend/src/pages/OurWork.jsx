@@ -27,7 +27,7 @@ export default function OurWork() {
         <div className="page-container">
             <Navbar />
             <section className="section" style={{ paddingTop: 140, paddingBottom: 60, background: 'var(--bg-primary)' }}>
-                <div className="container" style={{ textAlign: 'center' }}>
+                <div className="container" style={{ textAlign: 'center', maxWidth: '1600px', width: '95%' }}>
                     <div className="section-header slide-up">
                         <h1 className="section-title" style={{ fontSize: '5rem', fontFamily: 'var(--font-serif)', letterSpacing: '-1.5px', textTransform: 'uppercase' }}>Our Work</h1>
                     </div>
@@ -35,12 +35,7 @@ export default function OurWork() {
                     {loading ? (
                         <div className="loading" style={{ minHeight: '300px' }}><div className="spinner"></div></div>
                     ) : (
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                            gap: '40px',
-                            marginTop: '60px'
-                        }}>
+                        <div className="featured-works-grid" style={{ marginTop: '60px' }}>
                             {filteredWorks.length > 0 ? (
                                 filteredWorks.map((work, index) => (
                                 <div key={work.id || index} className="slide-up hover-float" style={{
@@ -62,26 +57,27 @@ export default function OurWork() {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'flex-end',
-                                        padding: '40px',
+                                        padding: '30px',
                                         textAlign: 'left'
                                     }}>
                                         <h3 style={{ 
-                                            fontSize: '3.5rem', 
+                                            fontSize: 'clamp(1.8rem, 2.5vw, 2.5rem)', 
                                             fontFamily: 'var(--font-serif)', 
                                             color: '#FFF', 
                                             marginBottom: '16px',
-                                            lineHeight: 1
+                                            lineHeight: 1.1,
+                                            wordWrap: 'break-word'
                                         }}>{work.title}</h3>
                                         
                                         {work.category && (
                                             <div style={{ display: 'flex' }}>
                                                 <div style={{
-                                                    background: '#A11D25',
-                                                    color: '#FFF',
-                                                    padding: '12px 24px',
+                                                    background: 'var(--accent-primary)',
+                                                    color: 'var(--bg-primary)',
+                                                    padding: '8px 16px',
                                                     borderRadius: '50px',
                                                     fontWeight: 700,
-                                                    fontSize: '0.85rem',
+                                                    fontSize: '0.75rem',
                                                     letterSpacing: '1.5px',
                                                     textTransform: 'uppercase'
                                                 }}>
@@ -93,9 +89,9 @@ export default function OurWork() {
                                 </div>
                             ))
                         ) : (
-                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '100px', background: '#F5F5F5', borderRadius: '48px' }}>
-                                <h3 style={{ fontSize: '2rem', color: '#0F131D', fontFamily: 'var(--font-serif)' }}>PORTFOLIO COMING SOON</h3>
-                                <p style={{ color: '#9CA3AF' }}>Our talented creators are currently updating their showcases.</p>
+                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '100px', background: 'var(--bg-card)', borderRadius: '48px', border: '1px solid var(--border)' }}>
+                                <h3 style={{ fontSize: '2rem', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}>PORTFOLIO COMING SOON</h3>
+                                <p style={{ color: 'var(--text-secondary)' }}>Our talented creators are currently updating their showcases.</p>
                             </div>
                         )}
                     </div>

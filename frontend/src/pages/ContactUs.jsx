@@ -13,7 +13,30 @@ export default function ContactUs() {
                 </p>
 
                 <div className="card hover-float" style={{ padding: '40px', background: 'var(--bg-secondary)' }}>
-                    <form onSubmit={(e) => { e.preventDefault(); alert('Message Sent!'); }}>
+                    <form onSubmit={async (e) => { 
+                        e.preventDefault(); 
+                        const formData = {
+                            name: e.target[0].value,
+                            email: e.target[1].value,
+                            subject: 'General Inquiry',
+                            message: e.target[2].value
+                        };
+                        try {
+                            const response = await fetch('http://localhost:3595/api/public/contact', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(formData)
+                            });
+                            if (response.ok) {
+                                alert('Message Sent Successfully!');
+                                e.target.reset();
+                            } else {
+                                alert('Failed to send message. Please try again later.');
+                            }
+                        } catch (err) {
+                            alert('Network error. Please try again.');
+                        }
+                    }}>
                         <div className="form-group" style={{ marginBottom: '20px' }}>
                             <label className="form-label">Name</label>
                             <input type="text" className="form-input" placeholder="Your name" required />

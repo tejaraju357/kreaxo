@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 	"vp-backend/database"
@@ -143,6 +144,13 @@ func Register(c *gin.Context) {
 		`, time.Now(), time.Now(), userID, req.Name, req.ProfileImage,
 		)
 	}
+
+	// Send Admin Email Notification
+	go func() {
+		subject := fmt.Sprintf("New %s Registration: %s", req.Role, req.Name)
+		body := fmt.Sprintf("A new %s has registered and is pending approval.\n\nName: %s\nEmail: %s\nPhone: %s\n\nPlease log in to the admin dashboard to review.", req.Role, req.Name, req.Email, req.Phone)
+		_ = SendAdminNotificationEmail(subject, body)
+	}()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Registration successful, pending admin approval"})
 }

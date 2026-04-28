@@ -482,76 +482,108 @@ func fetchYoutubePageScrape(channelURL string) *YoutubeStats {
 	pageStr := string(body)
 	stats := &YoutubeStats{}
 
-	// Channel name from <title>
-	titleRe := regexp.MustCompile(`(?i)<title>([^<]+?)(?:-\s*YouTube)?</title>`)
+	// ── Channel name from <title> ──────────────────────────────────────────
+	titleRe := regexp.MustCompile(`(?i)<title>([^<]+?)(?:\s*-\s*YouTube)?</title>`)
 	if m := titleRe.FindStringSubmatch(pageStr); len(m) > 1 {
 		stats.ChannelName = strings.TrimSpace(strings.ReplaceAll(m[1], "- YouTube", ""))
 	}
 
-	// ── Isolate channel header block to avoid capturing "Related Channels" ──────
-	searchStr := pageStr
-	headerStart := strings.Index(pageStr, `"pageHeaderViewModel"`)
-	if headerStart == -1 {
-		headerStart = strings.Index(pageStr, `"c4TabbedHeaderRenderer"`)
-	}
-	if headerStart == -1 {
-		headerStart = strings.Index(pageStr, `"header":`)
-	}
-	if headerStart != -1 {
-		endLimit := headerStart + 15000 // 15KB bounds is more than enough for the header JSON
-		if endLimit > len(pageStr) {
-			endLimit = len(pageStr)
+	// ── Strategy 1: New YouTube structure (2024+) ─────────────────────────
+	// YouTube now uses metadataParts in ytInitialData like:
+	// {"metadataParts":[{"text":{"content":"479M subscribers"},"accessibilityLabel":"479 million subscribers"},
+	//                   {"text":{"content":"968 videos",...}}]}
+	//
+	// We search for the content field that contains a subscriber count.
+	metaSubRe := regexp.MustCompile(`"content"\s*:\s*"([\d.,]+[KMBkmb]?\s*(?:million\s+)?subscribers?)"`)
+	if m := metaSubRe.FindStringSubmatch(pageStr); len(m) > 1 {
+		raw := m[1]
+		raw = regexp.MustCompile(`(?i)\s*subscribers?\s*$`).ReplaceAllString(raw, "")
+		raw = strings.ReplaceAll(raw, " million", "M")
+		raw = strings.ReplaceAll(raw, ",", "")
+		raw = strings.TrimSpace(raw)
+		if val := parseCompactNumber(raw); val > 0 {
+			stats.Subscribers = val
+			log.Printf("[YouTube Scrape] Strategy 1 (metadataParts content) subs=%d raw=%q", val, raw)
 		}
-		searchStr = pageStr[headerStart:endLimit]
 	}
 
-	// ── Subscriber count — multiple patterns YouTube uses ──────────────────
-	subPatterns := []*regexp.Regexp{
-		regexp.MustCompile(`"subscriberCountText"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"subscriberCountText"\s*:\s*\{[^}]*?"simpleText"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"subscriberCountText"\s*:\s*\{"simpleText"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"subscribers"\s*:\s*\{"simpleText"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"subscriberCountText"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"subscriberCountText"\s*:\s*\{"accessibility"\s*:\s*\{"accessibilityData"\s*:\s*\{"label"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`{"content":"([^"]+)\s*subscribers?"}`),
-	}
-	for _, re := range subPatterns {
-		if m := re.FindStringSubmatch(searchStr); len(m) > 1 {
+	// ── Strategy 2: subscriberCountText with accessibility label ──────────
+	// {"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"29.4 million subscribers"}}...
+	if stats.Subscribers == 0 {
+		accRe := regexp.MustCompile(`"subscriberCountText"\s*:\s*\{"accessibility"\s*:\s*\{"accessibilityData"\s*:\s*\{"label"\s*:\s*"([^"]+)"`)
+		if m := accRe.FindStringSubmatch(pageStr); len(m) > 1 {
 			raw := m[1]
-			// Clean up string
-			raw = regexp.MustCompile(`(?i)\s*(subscribers?)\s*$`).ReplaceAllString(raw, "")
-			raw = strings.ReplaceAll(raw, " million", "M") // some labels say "1.2 million"
+			raw = regexp.MustCompile(`(?i)\s*subscribers?\s*$`).ReplaceAllString(raw, "")
+			raw = strings.ReplaceAll(raw, " million", "M")
+			raw = strings.ReplaceAll(raw, " billion", "B")
 			raw = strings.TrimSpace(raw)
 			if val := parseCompactNumber(raw); val > 0 {
 				stats.Subscribers = val
-				break
+				log.Printf("[YouTube Scrape] Strategy 2 (accessibility label) subs=%d raw=%q", val, raw)
 			}
 		}
 	}
 
-	// ── Video count ────────────────────────────────────────────────────────
-	// We prioritize "videoCount" and replace Atoi with parseCompactNumber
-	// to handle approximate formats like "1.5K videos" falling back correctly.
-	videoPatterns := []*regexp.Regexp{
-		regexp.MustCompile(`"videoCount"\s*:\s*"([\d,]+)"`), // This is the EXACT video count from inner JSON
-		regexp.MustCompile(`"videosCountText"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"videoCountText"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"`),
-		regexp.MustCompile(`"videoCount(?:Text)?"\s*:\s*\{"simpleText"\s*:\s*"([^"]+)`),
-		regexp.MustCompile(`{"content":"([^"]+)\s*videos?"}`),
-	}
-	for _, re := range videoPatterns {
-		if m := re.FindStringSubmatch(searchStr); len(m) > 1 {
-			raw := strings.ReplaceAll(m[1], ",", "")
-			// Deal with formatting like "1.5K videos"
-			raw = regexp.MustCompile(`(?i)\s*(videos?)\s*$`).ReplaceAllString(raw, "")
-			raw = strings.TrimSpace(raw)
-			if val := parseCompactNumber(raw); val > 0 {
-				stats.Videos = val
-				break
+	// ── Strategy 3: simpleText and other legacy patterns ──────────────────
+	if stats.Subscribers == 0 {
+		legacyPatterns := []string{
+			`"subscriberCountText"\s*:\s*"([^"]+)"`,
+			`"subscriberCountText"\s*:\s*\{"simpleText"\s*:\s*"([^"]+)"`,
+			`"subscribers"\s*:\s*\{"simpleText"\s*:\s*"([^"]+)"`,
+			`"subscriberCountText"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"`,
+		}
+		for _, pat := range legacyPatterns {
+			re := regexp.MustCompile(pat)
+			if m := re.FindStringSubmatch(pageStr); len(m) > 1 {
+				raw := m[1]
+				raw = regexp.MustCompile(`(?i)\s*subscribers?\s*$`).ReplaceAllString(raw, "")
+				raw = strings.ReplaceAll(raw, " million", "M")
+				raw = strings.TrimSpace(raw)
+				if val := parseCompactNumber(raw); val > 0 {
+					stats.Subscribers = val
+					log.Printf("[YouTube Scrape] Strategy 3 (legacy pattern) subs=%d raw=%q", val, raw)
+					break
+				}
 			}
 		}
 	}
 
-	log.Printf("[YouTube Scrape] %s: %d subs, %d videos", channelURL, stats.Subscribers, stats.Videos)
+	// ── Video count: Strategy A - metadataParts content ──────────────────
+	metaVidRe := regexp.MustCompile(`"content"\s*:\s*"([\d.,]+[KMBkmb]?\s*videos?)"`)
+	if m := metaVidRe.FindStringSubmatch(pageStr); len(m) > 1 {
+		raw := m[1]
+		raw = regexp.MustCompile(`(?i)\s*videos?\s*$`).ReplaceAllString(raw, "")
+		raw = strings.ReplaceAll(raw, ",", "")
+		raw = strings.TrimSpace(raw)
+		if val := parseCompactNumber(raw); val > 0 {
+			stats.Videos = val
+			log.Printf("[YouTube Scrape] Videos Strategy A (metadataParts content) videos=%d raw=%q", val, raw)
+		}
+	}
+
+	// ── Video count: Strategy B - legacy videoCount fields ───────────────
+	if stats.Videos == 0 {
+		legacyVidPatterns := []string{
+			`"videoCount"\s*:\s*"([\d,]+)"`,
+			`"videosCountText"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"`,
+			`"videoCountText"\s*:\s*\{"runs"\s*:\s*\[\{"text"\s*:\s*"([^"]+)"`,
+			`"videoCount(?:Text)?"\s*:\s*\{"simpleText"\s*:\s*"([^"]+)"`,
+		}
+		for _, pat := range legacyVidPatterns {
+			re := regexp.MustCompile(pat)
+			if m := re.FindStringSubmatch(pageStr); len(m) > 1 {
+				raw := strings.ReplaceAll(m[1], ",", "")
+				raw = regexp.MustCompile(`(?i)\s*videos?\s*$`).ReplaceAllString(raw, "")
+				raw = strings.TrimSpace(raw)
+				if val := parseCompactNumber(raw); val > 0 {
+					stats.Videos = val
+					log.Printf("[YouTube Scrape] Videos Strategy B (legacy) videos=%d raw=%q", val, raw)
+					break
+				}
+			}
+		}
+	}
+
+	log.Printf("[YouTube Scrape] Final: %s -> subs=%d videos=%d name=%q", channelURL, stats.Subscribers, stats.Videos, stats.ChannelName)
 	return stats
 }

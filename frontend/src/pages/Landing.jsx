@@ -108,14 +108,14 @@ export default function Landing() {
                                  position: 'absolute',
                                  bottom: '40px',
                                  left: '40px',
-                                 background: '#A11D25',
-                                 color: '#FFF',
+                                 background: 'var(--accent-primary)',
+                                 color: 'var(--bg-primary)',
                                  padding: '12px 24px',
                                  borderRadius: '12px',
                                  fontWeight: 800,
                                  fontSize: '0.9rem',
                                  letterSpacing: '1px',
-                                 boxShadow: '0 8px 16px rgba(161, 29, 37, 0.4)'
+                                 boxShadow: 'var(--accent-glow)'
                              }}>
                                  {item.tag}
                              </div>
@@ -157,17 +157,20 @@ export default function Landing() {
                         position: absolute;
                         width: 320px;
                         height: 320px;
-                        background: #F5F3EE;
-                        border: 2px solid #E3DDD4;
+                        background: var(--bg-card);
+                        border: 2px solid var(--border);
                         border-radius: 48px;
                         padding: 40px;
                         display: flex;
                         flex-direction: column;
                         justify-content: space-between;
                         text-decoration: none;
+                        transition: all 0.3s ease;
                     }
                     .static-item:hover {
-                        border-color: #A11D25;
+                        border-color: var(--accent-primary);
+                        box-shadow: var(--shadow-lg);
+                        z-index: 10;
                     }
                     .pos-1 { top: 0%; left: 50%; transform: translate(-50%, -10%); }
                     .pos-2 { top: 30%; left: 90%; transform: translate(-50%, -50%); }
@@ -204,15 +207,11 @@ export default function Landing() {
 
             {/* Massive Featured Works Section - Replaced Images per Request */}
             <section className="section" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', paddingBottom: '100px' }}>
-                <div className="container" style={{ maxWidth: '1200px' }}>
+                <div className="container" style={{ maxWidth: '1600px', width: '95%' }}>
                     <div className="section-header" style={{ textAlign: 'center', marginBottom: '80px', marginTop: '40px' }}>
                         <h2 className="section-title" style={{ fontWeight: 500, fontFamily: 'var(--font-serif)', fontSize: '4.5rem', letterSpacing: '-1.5px', textTransform: 'uppercase' }}>Our Work.</h2>
                     </div>
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                        gap: '40px'
-                    }}>
+                    <div className="featured-works-grid">
                         {[
                             { id: 'd1', title: 'PHOTOGRAPHER', category: 'PRODUCTS • EVENTS • BRANDING', image_url: 'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=1200' },
                             { id: 'd2', title: 'VIDEOGRAPHER', category: 'REELS • BRAND FILMS', image_url: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&q=80&w=1200' },
@@ -236,25 +235,26 @@ export default function Landing() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'flex-end',
-                                    padding: '40px',
+                                    padding: '30px',
                                     textAlign: 'left'
                                 }}>
                                     <h3 style={{ 
-                                        fontSize: '3rem', 
+                                        fontSize: 'clamp(1.8rem, 2.5vw, 2.5rem)', 
                                         fontFamily: 'var(--font-serif)', 
                                         color: '#FFF', 
                                         marginBottom: '16px',
-                                        lineHeight: 1
+                                        lineHeight: 1.1,
+                                        wordWrap: 'break-word'
                                     }}>{work.title}</h3>
                                     
                                     <div style={{ display: 'flex' }}>
                                         <div style={{
-                                            background: '#eb58a1e1',
-                                            color: '#FFF',
-                                            padding: '12px 24px',
+                                            background: 'var(--accent-primary)',
+                                            color: 'var(--bg-primary)',
+                                            padding: '8px 16px',
                                             borderRadius: '50px',
                                             fontWeight: 700,
-                                            fontSize: '0.85rem',
+                                            fontSize: '0.75rem',
                                             letterSpacing: '1px',
                                             textTransform: 'uppercase'
                                         }}>

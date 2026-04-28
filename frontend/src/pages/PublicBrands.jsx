@@ -15,7 +15,7 @@ export default function PublicBrands() {
     }, []);
 
     return (
-        <div className="page-container" style={{ background: '#fcfbf9' }}>
+        <div className="page-container" style={{ background: 'var(--bg-primary)' }}>
             <Navbar />
             <div className="container" style={{ paddingTop: '120px', paddingBottom: '80px', maxWidth: '1200px' }}>
                 
@@ -42,7 +42,7 @@ export default function PublicBrands() {
                                 {/* Brand Banner Background */}
                                 <div style={{ height: '120px', background: `linear-gradient(to right, #0f766e, #115e59)`, position: 'relative' }}>
                                     {/* Logo Circle Overlapping */}
-                                    <div style={{ position: 'absolute', bottom: '-30px', left: '24px', width: '80px', height: '80px', borderRadius: '50%', background: '#fff', padding: '4px', border: '2px solid var(--border)', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                                    <div style={{ position: 'absolute', bottom: '-30px', left: '24px', width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-card)', padding: '4px', border: '2px solid var(--border)', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
                                         {brand.logo ? (
                                             <img src={brand.logo} alt={brand.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                                         ) : (
@@ -56,7 +56,7 @@ export default function PublicBrands() {
                                 <div style={{ padding: '40px 24px 24px 24px' }}>
                                     <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.5px' }}>{brand.name}</h3>
                                     {brand.industry && (
-                                        <span style={{ fontSize: '0.75rem', background: '#f4f4f5', color: 'var(--text-secondary)', padding: '4px 12px', borderRadius: '20px', fontWeight: 600, border: '1px solid var(--border)' }}>
+                                        <span style={{ fontSize: '0.75rem', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', padding: '4px 12px', borderRadius: '20px', fontWeight: 600, border: '1px solid var(--border)' }}>
                                             {brand.industry}
                                         </span>
                                     )}

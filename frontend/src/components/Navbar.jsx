@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiInstagram } from 'react-icons/fi';
+import { FiMenu, FiX } from 'react-icons/fi';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
     const { user } = useAuth();
     const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
     const isActive = (path) => location.pathname === path ? 'active' : '';
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location.pathname]);
 
     return (
         <nav className="navbar" style={{ background: 'var(--bg-primary)', borderColor: 'var(--border)' }}>
@@ -19,7 +26,12 @@ export default function Navbar() {
                       style={{ height: '32px', objectFit: 'contain' }} 
                     />
                 </Link>
-                <ul className="navbar-links" style={{ display: 'flex', alignItems: 'center' }}>
+
+                <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                    {isMobileMenuOpen ? <FiX /> : <FiMenu />}
+                </button>
+
+                <ul className={`navbar-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
                     <li className="dropdown" style={{ marginLeft: '12px' }}>
                         <Link to="/services" className={isActive('/services')}>Services</Link>
                         <div className="dropdown-content">
@@ -36,7 +48,8 @@ export default function Navbar() {
                     
 
 
-                    <li className="dropdown" style={{ marginLeft: 'auto', paddingLeft: '20px' }}>
+                    <li className="dropdown" style={{ marginLeft: 'auto', paddingLeft: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <ThemeToggle />
                         <Link to="/login" style={{ 
                             display: 'flex', 
                             alignItems: 'center', 

@@ -11,12 +11,7 @@ export default function Footer() {
             padding: '100px 0 60px 0', 
             borderTop: '1px solid rgba(255,255,255,0.1)' 
         }}>
-            <div className="container" style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '1.5fr 1fr 1fr', 
-                gap: '80px', 
-                maxWidth: '1200px' 
-            }}>
+            <div className="container footer-grid" style={{ maxWidth: '1200px' }}>
                 
                 {/* Brand Column */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -73,14 +68,11 @@ export default function Footer() {
             </div>
 
              {/* Minimal Bottom Bar */}
-             <div className="container" style={{ 
+             <div className="container footer-bottom" style={{ 
                  marginTop: '80px', 
                  paddingTop: '32px', 
                  borderTop: '1px solid rgba(255,255,255,0.1)', 
-                 maxWidth: '1200px',
-                 display: 'flex',
-                 justifyContent: 'space-between',
-                 alignItems: 'center'
+                 maxWidth: '1200px'
              }}>
                  <p style={{ color: 'rgba(85, 81, 81, 0.4)', fontSize: '0.8rem', letterSpacing: '1px' }}>
                     © {new Date().getFullYear()} KREAXO. ALL RIGHTS RESERVED.

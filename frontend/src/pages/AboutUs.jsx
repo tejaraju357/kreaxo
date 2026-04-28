@@ -35,17 +35,10 @@ export default function AboutUs() {
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;600;800&display=swap');
 
-                :root {
-                    --font-serif: 'Playfair Display', serif;
-                    --font-sans: 'Inter', sans-serif;
+                .about-page {
                     --color-brand: var(--accent-primary);
                     --color-yellow: #F4B400;
                     --color-blue: #8EC9E1;
-                    --text-primary: #1A0F2E;
-                    --text-muted: #6B7280;
-                }
-
-                .about-page {
                     font-family: var(--font-sans);
                     color: var(--text-primary);
                     overflow-x: hidden;

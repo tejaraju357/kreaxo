@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"vp-backend/database"
 	"vp-backend/models"
@@ -75,4 +76,27 @@ func PublicGetStats(c *gin.Context) {
 		  (SELECT COUNT(*) FROM collaboration_requests WHERE status = 'accepted' AND deleted_at IS NULL) AS collaborations
 	`).Scan(&stats)
 	c.JSON(http.StatusOK, stats)
+}
+
+// ContactUs handles contact form submissions and sends an email to the admin
+func ContactUs(c *gin.Context) {
+	var req struct {
+		Name    string `json:"name" binding:"required"`
+		Email   string `json:"email" binding:"required"`
+		Subject string `json:"subject"`
+		Message string `json:"message" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "All fields are required"})
+		return
+	}
+
+	go func() {
+		subject := fmt.Sprintf("New Contact Us Request: %s", req.Subject)
+		body := fmt.Sprintf("You have received a new message from the website contact form.\n\nName: %s\nEmail: %s\nSubject: %s\n\nMessage:\n%s", req.Name, req.Email, req.Subject, req.Message)
+		_ = SendAdminNotificationEmail(subject, body)
+	}()
+
+	c.JSON(http.StatusOK, gin.H{"message": "Your message has been sent successfully."})
 }

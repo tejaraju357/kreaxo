@@ -32,15 +32,7 @@ export default function Login() {
         }
     };
 
-    const fillDemo = (role) => {
-        const creds = {
-            admin: { email: 'priyathamtella@gmail.com', password: 'reechomedia' },
-            brand: { email: 'nike@brand.com', password: 'brand123' },
-            creator: { email: 'alice@creator.com', password: 'creator123' },
-        };
-        setEmail(creds[role]?.email || '');
-        setPassword(creds[role]?.password || '');
-    };
+
 
     const quotes = [
         { icon: '🚀', title: 'Launch Your Brand', desc: 'Connect with 2,400+ verified creators ready to amplify your message.' },
@@ -56,13 +48,6 @@ export default function Login() {
             {/* ── Left Panel ── */}
             <div className="login-left" style={{
                 background: 'linear-gradient(145deg, #1A0F2E 0%, #2D1654 40%, #6c3ff5 75%, #C084FC 100%)',
-                position: 'relative',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: '48px 44px',
-                minHeight: '100vh',
             }}>
                 {/* Animated blobs */}
                 <div style={{
@@ -269,14 +254,7 @@ export default function Login() {
                         </button>
                     </form>
 
-                    <div className="login-demo">
-                        <p>Quick Demo Access</p>
-                        <div className="login-demo-btns">
-                            <button className="demo-btn demo-admin" onClick={() => fillDemo('admin')} id="demo-admin">Admin</button>
-                            <button className="demo-btn demo-brand" onClick={() => fillDemo('brand')} id="demo-brand">Brand</button>
-                            <button className="demo-btn demo-creator" onClick={() => fillDemo('creator')} id="demo-creator">Creator</button>
-                        </div>
-                    </div>
+
 
                     <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                         Don't have an account?{' '}

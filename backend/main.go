@@ -63,6 +63,7 @@ func main() {
 		public.GET("/creators", handlers.PublicGetCreators)
 		public.GET("/brands", handlers.PublicGetBrands)
 		public.GET("/stats", handlers.PublicGetStats)
+		public.POST("/contact", handlers.ContactUs)
 	}
 
 	// ==================== AUTH ROUTES =======================

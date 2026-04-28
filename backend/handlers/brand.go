@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 	"vp-backend/database"
@@ -80,6 +81,18 @@ func BrandSendRequest(c *gin.Context) {
 
 	var collabReq models.CollaborationRequest
 	database.DB.Raw("SELECT * FROM collaboration_requests WHERE id = ? LIMIT 1", collabID).Scan(&collabReq)
+
+	// Send Admin Email Notification
+	go func() {
+		var brandName, creatorName string
+		database.DB.Raw("SELECT name FROM brands WHERE id = ? LIMIT 1", brandID).Scan(&brandName)
+		database.DB.Raw("SELECT name FROM creators WHERE id = ? LIMIT 1", req.CreatorID).Scan(&creatorName)
+
+		subject := fmt.Sprintf("New Collaboration Request: %s to %s", brandName, creatorName)
+		body := fmt.Sprintf("Brand '%s' has proposed an offer to Creator '%s'.\n\nMessage:\n%s\n\nPlease log in to the admin dashboard to review.", brandName, creatorName, req.Message)
+		_ = SendAdminNotificationEmail(subject, body)
+	}()
+
 	c.JSON(http.StatusCreated, collabReq)
 }
 

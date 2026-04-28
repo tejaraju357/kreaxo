@@ -92,10 +92,10 @@ export default function ServicesPage() {
                 
                 {/* Header */}
                 <div style={{ textAlign: 'center', marginBottom: '80px', marginTop: '60px' }}>
-                    <h2 style={{ fontSize: '0.9rem', color: '#a11d80ff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '24px' }}>
+                    <h2 style={{ fontSize: '0.9rem', color: 'var(--accent-primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '24px' }}>
                         DISCOVER ELITE TALENT
                     </h2>
-                    <h1 style={{ fontSize: '5rem', fontFamily: 'var(--font-serif)', color: '#0F131D', letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 0.9 }}>
+                    <h1 style={{ fontSize: '5rem', fontFamily: 'var(--font-serif)', color: 'var(--text-primary)', letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 0.9 }}>
                         OUR CREATORS
                     </h1>
                 </div>
@@ -121,9 +121,9 @@ export default function ServicesPage() {
                                     padding: '10px 20px',
                                     borderRadius: '50px',
                                     border: '1px solid',
-                                    borderColor: activeFilter === f.label ? '#a11d80ff' : '#E5E7EB',
-                                    background: activeFilter === f.label ? '#a11d80ff' : '#FFF',
-                                    color: activeFilter === f.label ? '#FFF' : '#4B5563',
+                                    borderColor: activeFilter === f.label ? 'var(--accent-primary)' : 'var(--border)',
+                                    background: activeFilter === f.label ? 'var(--accent-primary)' : 'var(--bg-card)',
+                                    color: activeFilter === f.label ? 'var(--bg-primary)' : 'var(--text-primary)',
                                     fontWeight: 700,
                                     fontSize: '0.75rem',
                                     cursor: 'pointer',
@@ -148,10 +148,11 @@ export default function ServicesPage() {
                                 width: '100%',
                                 padding: '14px 16px 14px 44px',
                                 borderRadius: '50px',
-                                border: '1px solid #E5E7EB',
+                                border: '1px solid var(--border)',
                                 outline: 'none',
                                 fontSize: '0.9rem',
-                                color: '#0F131D'
+                                color: 'var(--text-primary)',
+                                background: 'var(--bg-input)'
                             }}
                         />
                     </div>
@@ -174,12 +175,12 @@ export default function ServicesPage() {
                                 return (
                                     <Link to={`/profile/${creator.id}`} key={creator.id} style={{
                                         textDecoration: 'none',
-                                        background: '#FFF',
+                                        background: 'var(--bg-card)',
                                         borderRadius: '32px',
                                         overflow: 'hidden',
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        border: '1px solid #F3F4F6',
+                                        border: '1px solid var(--border)',
                                         boxShadow: '0 8px 32px rgba(0,0,0,0.02)'
                                     }} className="creator-grid-card">
                                         {/* Profile Photo Area */}
@@ -193,13 +194,13 @@ export default function ServicesPage() {
                                                 position: 'absolute', 
                                                 bottom: '16px', 
                                                 left: '16px', 
-                                                background: 'rgba(255,255,255,0.95)', 
+                                                background: 'var(--bg-glass)', 
                                                 padding: '6px 16px', 
                                                 borderRadius: '50px',
                                                 fontSize: '0.65rem',
                                                 fontWeight: 900,
                                                 letterSpacing: '1px',
-                                                color: '#0F131D'
+                                                color: 'var(--text-primary)'
                                             }}>
                                                 {creator.category?.toUpperCase() || 'CREATOR'}
                                             </div>
@@ -210,7 +211,7 @@ export default function ServicesPage() {
                                             <h3 style={{ 
                                                 fontSize: '1.6rem', 
                                                 fontFamily: 'var(--font-serif)', 
-                                                color: '#0F131D', 
+                                                color: 'var(--text-primary)', 
                                                 marginBottom: '20px',
                                                 lineHeight: 1.2
                                             }}>
@@ -223,20 +224,20 @@ export default function ServicesPage() {
                                                     display: 'grid', 
                                                     gridTemplateColumns: (hasInsta && hasYoutube) ? '1fr 1fr' : '1fr', 
                                                     gap: '12px', 
-                                                    borderTop: '1px solid #F3F4F6', 
+                                                    borderTop: '1px solid var(--border)', 
                                                     paddingTop: '20px' 
                                                 }}>
                                                     {/* Insta Column */}
                                                     {hasInsta && (
                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9CA3AF', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
                                                                 <FiInstagram /> INSTAGRAM
                                                             </div>
-                                                            <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F131D' }}>
-                                                                {formatCount(creator.insta_followers)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: '#9CA3AF' }}>Followers</span>
+                                                            <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                                                                {formatCount(creator.insta_followers)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'var(--text-muted)' }}>Followers</span>
                                                             </div>
-                                                            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#4B5563', marginTop: '2px' }}>
-                                                                {formatCount(creator.insta_posts)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: '#9CA3AF' }}>Posts</span>
+                                                            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginTop: '2px' }}>
+                                                                {formatCount(creator.insta_posts)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'var(--text-muted)' }}>Posts</span>
                                                             </div>
                                                         </div>
                                                     )}
@@ -244,14 +245,14 @@ export default function ServicesPage() {
                                                     {/* Youtube Column */}
                                                     {hasYoutube && (
                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9CA3AF', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
                                                                 <FiYoutube /> YOUTUBE
                                                             </div>
-                                                            <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F131D' }}>
-                                                                {formatCount(creator.youtube_subscribers)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: '#9CA3AF' }}>Subs</span>
+                                                            <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                                                                {formatCount(creator.youtube_subscribers)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'var(--text-muted)' }}>Subs</span>
                                                             </div>
-                                                            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#4B5563', marginTop: '2px' }}>
-                                                                {formatCount(creator.youtube_videos)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: '#9CA3AF' }}>Videos</span>
+                                                            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginTop: '2px' }}>
+                                                                {formatCount(creator.youtube_videos)} <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'var(--text-muted)' }}>Videos</span>
                                                             </div>
                                                         </div>
                                                     )}
@@ -266,7 +267,8 @@ export default function ServicesPage() {
                                 gridColumn: '1 / -1', 
                                 textAlign: 'center', 
                                 padding: '80px', 
-                                background: '#FFF'
+                                background: 'var(--bg-card)',
+                                color: 'var(--text-primary)'
                             }}>
                                 <h3 style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)' }}>No talent found.</h3>
                             </div>
